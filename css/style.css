@@ -1,0 +1,135 @@
+:root {
+    --primary: #ff4400;
+    --primary-light: hsl(1, 95%, 71%);
+    --background: #111;
+    --surface: #222;
+    --text: #ffffff;
+    --accent: #ff4444;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Space Grotesk", sans-serif;
+    background-color: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Login Styles */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-form {
+    background: var(--surface);
+    padding: 3rem;
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+}
+
+.login-form::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, transparent 100%);
+    opacity: 0.1;
+    pointer-events: none;
+    border-radius: 8px;
+}
+
+.login-form h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    /* background: linear-gradient(90deg, var(--text) 0%, var(--primary) 100%); */
+    /* -webkit-background-clip: text; */
+    /* -webkit-text-fill-color: transparent; */
+    /* letter-spacing: -1px; */
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text);
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.primary-button {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary);
+    color: var(--background);
+    border: none;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.primary-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.primary-button:hover::before {
+    left: 100%;
+}
+
+.primary-button:hover {
+    background: var(--primary-light);
+}
+
+.error-message {
+    color: var(--accent);
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
