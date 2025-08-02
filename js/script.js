@@ -1,5 +1,18 @@
 const app = document.getElementById("app");
 let token = null;
+let userData = null;
+let collaborators = [];
+
+const API = {
+    login: "https://learn.zone01oujda.ma/api/auth/signin",
+    graphQl : "https://learn.zone01oujda.ma/api/graphql-engine/v1/graphql",
+}
+
+const QUERY = `query { 
+    user {
+        login firstName lastName email auditRatio totalUp totalDown
+    }
+}`;
 
 window.addEventListener('DOMContentLoaded', () => {
     init();
@@ -20,8 +33,32 @@ function init() {
     }
 }
 
+// 2.2 - profile (render static data)
+
 async function profile() {
     console.log("inside main profile")
+    // get user data by query
+
+    try {
+        const response = await fetch(API.graphQl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ query: QUERY})
+        })
+        const result = await response.json();
+        if (result.error) {
+            throw new Error("failed to fetch user data")
+        }
+
+        console.log("DATA ===> ", result)
+        userData = result
+    } catch (error) {
+        console.log(error);
+        logout();
+    }
     renderProfile();
 }
 
@@ -36,17 +73,17 @@ function renderProfile() {
                 Logout
             </button>
         </div>
+        <span>USER DATA ===> ${userData}</span>
     `;
 }
 
 function logout() {
     removeToken();
+    userData = null;
+    collaborators = null;
     renderLogin();
 }
-// 2.1 - ( query )
-// 2.2 - profile (render static data)
 
-const loginApi = "https://learn.zone01oujda.ma/api/auth/signin";
 
 function renderLogin() {
     app.innerHTML = `
@@ -80,7 +117,7 @@ async function login() {
     const credentials = btoa(`${username}:${password}`);
 
     try {
-        const response = await fetch(loginApi, {
+        const response = await fetch(API.login, {
             method: "POST",
             headers: { Authorization: `Basic ${credentials}` }
         });
@@ -97,6 +134,8 @@ async function login() {
     } catch (error) {
         console.log("ERROR", error)
         document.getElementById('errorMessage').innerHTML = 'Login failed. Please check your credentials.'
+        setTimeout(() => document.getElementById('errorMessage').innerHTML = '', 4000);
+
     }
 }
 
