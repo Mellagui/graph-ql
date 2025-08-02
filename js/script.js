@@ -13,40 +13,38 @@ function init() {
 
     if (currentToken && isValidToken(currentToken)) {
         token = currentToken;
-        // profile();
+        profile();
     } else {
         removeToken();
         renderLogin();
     }
 }
 
-function getToken() {
-    return localStorage.getItem("z01Token");
+async function profile() {
+    console.log("inside main profile")
+    renderProfile();
 }
 
-function removeToken() {
-    localStorage.removeItem("z01Token");
-    token = null;
+function renderProfile() {
+    app.innerHTML = `
+        <div class="profile-header">
+            <div class="profile-info">
+                <h1> USER NAME </h1>
+                <p> EMAIL.EXP@.COM </p>
+            </div>
+            <button class="logout-button" onclick="logout()">
+                Logout
+            </button>
+        </div>
+    `;
 }
 
-function isValidToken(token) {
-    if (!token) return false;
-
-    try {
-        const payload = atob(token.split("."[1]));
-        const data = JSON.parse(payload);
-        console.log("payload object:", data);
-
-        const now = Date.now() / 1000;
-        return data.exp > now
-    } catch {
-        return false
-    }
+function logout() {
+    removeToken();
+    renderLogin();
 }
-
-function saveToken(token) {
-    localStorage.setItem('z01Token', token);
-}
+// 2.1 - ( query )
+// 2.2 - profile (render static data)
 
 const loginApi = "https://learn.zone01oujda.ma/api/auth/signin";
 
@@ -94,14 +92,38 @@ async function login() {
         token = await response.json();
 
         saveToken(token);
-        // profile();
+        profile();
         
     } catch (error) {
         console.log("ERROR", error)
         document.getElementById('errorMessage').innerHTML = 'Login failed. Please check your credentials.'
     }
 }
-// 1.2 ( jwt )
 
-// 2.1 - ( query )
-// 2.2 - profile (render static data)
+function getToken() {
+    return localStorage.getItem("z01Token")
+}
+
+function removeToken() {
+    localStorage.removeItem("z01Token");
+    token = null;
+}
+
+function isValidToken(token) {
+    if (!token) return false;
+
+    try {
+        const payload = atob(token.split(".")[1]);
+        const data = JSON.parse(payload);
+        console.log("payload object:", data);
+
+        const now = Date.now() / 1000;
+        return data.exp > now
+    } catch {
+        return false
+    }
+}
+
+function saveToken(token) {
+    localStorage.setItem('z01Token', token);
+}

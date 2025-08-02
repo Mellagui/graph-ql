@@ -4,6 +4,7 @@
     --background: #111;
     --surface: #222;
     --text: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
     --accent: #ff4444;
 }
 
@@ -132,4 +133,62 @@ body {
     margin-top: 1rem;
     text-align: center;
     font-size: 0.9rem;
+}
+
+
+/**/
+.profile-header {
+    background: var(--surface);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: var(--primary);
+    border-radius: 4px 0 0 4px;
+}
+
+.profile-info h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, var(--text) 0%, var(--primary) 100%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.profile-info p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.logout-button {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.logout-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent);
+    color: var(--accent);
 }
