@@ -67,7 +67,6 @@ async function profile() {
         }
 
         console.log("DATA ===> ", result.data)
-        // userData = result
 
         const user = result.data.user[0];
         userData = {
@@ -83,7 +82,6 @@ async function profile() {
             formattedXP: Utils.formatXP(user.transactions_aggregate.aggregate.sum.amount)
         };
 
-        // Process collaborators
         collaborators = [];
         userData.projects.forEach(project => {
             project.group.members.forEach(member => {
@@ -101,7 +99,6 @@ async function profile() {
             });
         });
 
-        // Sort collaborators by count
         collaborators.sort((a, b) => b.count - a.count);
         renderProfile();
     } catch (error) {
@@ -167,7 +164,15 @@ function renderProfile() {
                 </div>
 
                 <div class="chart-container">
-                    <div class="collaboration-list" id="collaborationList"></div>
+                    <h2>Collaboration Network</h2>
+                    <div class="chart-section">
+                        <div class="chart-info" id="collaborationInfo">
+                            Hover over bars to see details
+                        </div>
+                        <div class="svg-container">
+                            <svg id="collaborationChart"></svg>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -177,7 +182,7 @@ function renderProfile() {
     // render charts after DOM is updated
     setTimeout(() => {
         renderAuditRatioBar();
-        renderCollaborationList();
+        renderCollaborationChart();
     }, 100);
 }
 
@@ -193,15 +198,59 @@ function renderAuditRatioBar() {
         </svg>
     `;
 }
-function renderCollaborationList() {
-    const listContainer = document.getElementById('collaborationList');
-    listContainer.innerHTML = collaborators.slice(0, 8).map(collaborator => `
-        <div class="collaboration-item">
-            <span>${collaborator.name}</span>
-            <span class="collaboration-count">${collaborator.count}</span>
-        </div>
-    `).join('');
+function renderCollaborationChart() {
+    if (collaborators.length === 0) return;
+
+    const svg = document.getElementById('collaborationChart');
+    const topCollaborators = collaborators.slice(0, 10); // Top 10
+    const maxCount = topCollaborators[0].count;
+    const width = Math.max(400, topCollaborators.length * 40);
+    const height = 250;
+    const barWidth = width / topCollaborators.length - 5;
+
+    // remove previous content and set new SVG
+    svg.innerHTML = '';
+    svg.setAttribute('width', width);
+    svg.setAttribute('height', height);
+
+    topCollaborators.forEach((collaborator, index) => {
+        const barHeight = (collaborator.count / maxCount) * (height - 40);
+        const x = index * (barWidth + 5);
+        const y = height - barHeight - 20;
+
+        // create bar
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', x);
+        rect.setAttribute('y', y);
+        rect.setAttribute('width', barWidth);
+        rect.setAttribute('height', barHeight);
+        rect.setAttribute('fill', 'var(--primary)');
+        rect.setAttribute('rx', '3');
+        rect.classList.add('chart-bar');
+
+        // add hover events
+        rect.addEventListener('mouseenter', () => {
+            document.getElementById('collaborationInfo').textContent = 
+                `${collaborator.name}: ${collaborator.count} projects`;
+        });
+
+        rect.addEventListener('mouseleave', () => {
+            document.getElementById('collaborationInfo').textContent = 
+                'Hover over bars to see details';
+        });
+
+        svg.appendChild(rect);
+    });
 }
+
+function showError(message) {
+    const errorElement = document.getElementById('errorMessage');
+    if (errorElement) {
+        errorElement.textContent = message;
+        setTimeout(() => errorElement.textContent = '', 4000);
+    }
+}
+
 
 function logout() {
     removeToken();
@@ -292,7 +341,6 @@ function saveToken(token) {
     localStorage.setItem('z01Token', token);
 }
 
-// Utility Functions
 const Utils = {
     formatXP: (amount) => {
         if (amount < 1000) return amount + " b";
@@ -304,7 +352,6 @@ const Utils = {
         if (amount < 1000000) return (amount / 1000).toFixed(2) + " kb";
         return (amount / 1000000).toFixed(2) + " Mb";
     },
-
     formatProjectName: (path) => {
         return path.split('/').pop().replace(/-/g, ' ');
     },
