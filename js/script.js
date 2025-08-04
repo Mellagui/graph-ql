@@ -8,7 +8,6 @@ const Api = {
     graphQl : "https://learn.zone01oujda.ma/api/graphql-engine/v1/graphql",
 }
 
-//
 const QUERY = `{ 
     user {
         login firstName lastName email auditRatio totalUp totalDown
@@ -142,7 +141,7 @@ const Ui = {
         const svg = document.getElementById('collaborationChart');
         const topCollaborators = collaborators.slice(0, 10); // top 10
         const maxCount = topCollaborators[0].count;
-        const width = Math.max(400, topCollaborators.length * 40);
+        const width = 400;
         const height = 250;
         const barWidth = width / topCollaborators.length - 5;
 
