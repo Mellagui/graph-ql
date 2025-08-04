@@ -47,6 +47,7 @@ const Ui = {
             </div>
         `;
     },
+
     renderProfile: () => {
         app.innerHTML = `
             <div class="profile-container">
@@ -123,6 +124,7 @@ const Ui = {
             Ui.renderCollaborationChart();
         }, 100);
     },
+
     renderAuditRatioBar: () => {
         const total = userData.totalUp + userData.totalDown;
         const upPercent = total > 0 ? (userData.totalUp / total) * 100 : 0;
@@ -135,6 +137,7 @@ const Ui = {
             </svg>
         `;
     },
+
     renderCollaborationChart: () => {
         if (collaborators.length === 0) return;
 
@@ -200,12 +203,14 @@ const Service = {
             Utils.showError('Login failed. Please check your credentials.');
         }
     },
+
     logout: () => {
         Token.remove();
         userData = null;
         collaborators = null;
         Ui.renderLogin();
     },
+
     profile: async () => {
         try {
             const response = await fetch(Api.graphQl, {
@@ -216,12 +221,9 @@ const Service = {
                 },
                 body: JSON.stringify({ query: QUERY})
             })
-            const result = await response.json();
-            if (result.error) {
-                throw new Error("failed to fetch user data")
-            }
 
-            console.log("user data ===> ", result.data.user[0])
+            if (!response.ok) throw new Error('failed to fetch user data');
+            const result = await response.json();
             const user = result.data.user[0];
 
             userData = {
@@ -240,16 +242,9 @@ const Service = {
             collaborators = [];
             userData.projects.forEach(project => {
                 project.group.members.forEach(member => {
-                    if (member.userLogin !== userData.username) {
-                        let collaborator = collaborators.find(c => c.name === member.userLogin);
-                        if (collaborator) {
-                            collaborator.count++;
-                        } else {
-                            collaborators.push({ 
-                                name: member.userLogin, 
-                                count: 1 
-                            });
-                        }
+                    if (member.userLogin !== userData.userName) {
+                        let collab = collaborators.find(c => c.name === member.userLogin);
+                        collab ? collab.count++ : collaborators.push({ name: member.userLogin, count: 1 });
                     }
                 });
             });
@@ -265,20 +260,19 @@ const Service = {
 
 const Token = {
     get: () => localStorage.getItem("z01Token"),
+
     save: (token) => localStorage.setItem('z01Token', token),
+
     remove: () => {
         localStorage.removeItem("z01Token");
         token = null;
     },
+
     isValid: (token) => {
         if (!token) return false;
         try {
-            const payload = atob(token.split(".")[1]);
-            const data = JSON.parse(payload);
-
-            console.log("payload object:", data);
-
-            return data.exp > Date.now() / 1000
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            return payload.exp > Date.now() / 1000
         } catch {
             return false
         }
@@ -291,10 +285,12 @@ const Utils = {
         if (amount < 1000000) return (amount / 1000).toFixed(fix) + " kb";
         return (amount / 1000000).toFixed(fix) + " Mb";
     },
+
     formatProjectName: (path) => {
         console.log(path)
         return path.split('/').pop().replace(/-/g, ' ');
     },
+
     showError: (message) => {
         const errorElement = document.getElementById('errorMessage');
         if (errorElement) {
