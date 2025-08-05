@@ -13,10 +13,9 @@ const QUERY = `{
         login firstName lastName email auditRatio totalUp totalDown
         
         finished_projects: groups(where: {
-            group: {status: {_eq: finished}, _and: [
-                {path: {_like: "%module%"}},
-                {path: {_nilike: "%piscine-js%"}}
-            ]}
+            group: {status: {_eq: finished}, _and: 
+                {eventId: {_eq: 41}}
+            }
         }) {
             group { path members { userLogin } }
         }
