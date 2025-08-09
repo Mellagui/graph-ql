@@ -8,6 +8,13 @@ const Api = {
     graphQl : "https://learn.zone01oujda.ma/api/graphql-engine/v1/graphql",
 }
 
+/*  get project by path :: handle external talent
+    group: {status: {_eq: finished}, _and: [
+        {path: {_like: "%module%"}},
+        {path: {_nilike: "%piscine%"}}
+    ]}
+*/
+
 const QUERY = `{ 
     user {
         login firstName lastName email auditRatio totalUp totalDown
