@@ -289,7 +289,7 @@ const Utils = {
     formatXP: (amount, fix = 0) => {
         if (amount < 1000) return amount + " b";
         if (amount < 1000000) return (amount / 1000).toFixed(fix) + " kb";
-        return (amount / 1000000).toFixed(fix) + " Mb";
+        return (amount / 1000000).toFixed(2) + " Mb";
     },
 
     formatProjectName: (path) => {
